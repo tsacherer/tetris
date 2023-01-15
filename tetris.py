@@ -2,8 +2,6 @@ import turtle, random
 from playsound import playsound
 import threading
 
-#this is a test
-
 def loopSound():
     while True:
         playsound('Tetris.mp3', block=True)
@@ -12,8 +10,6 @@ def loopSound():
 loopThread = threading.Thread(target=loopSound, name='backgroundMusicThread')
 loopThread.daemon = True # shut down music thread when the rest of the program exits
 loopThread.start()
-
-
 
 
 SCALE = 32 #Controls how many pixels wide each grid square is
@@ -69,11 +65,6 @@ class Start_Screen:
     def exit_game(self):
         turtle.bye()
 
-
-
-    
-
-
 class Game:
     def __init__(self):
         #Setup window size based on SCALE value.
@@ -116,7 +107,7 @@ class Game:
         self.occupied = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],]
         for list in self.occupied:
             for i in range(10):
-                list.append(False)
+                list.append(None)
 
 
         turtle.ontimer(self.gameloop, 300)
@@ -243,7 +234,7 @@ class Block:
             print(y)
             if y == -1:
                 for sq in self.squares:
-                    occupied[19 - sq.ycor()][sq.xcor()] = True
+                    occupied[19 - sq.ycor()][sq.xcor()] = square
                 print(occupied)
                 return False
             if y > 19:
@@ -253,12 +244,12 @@ class Block:
             #         occupied[19 - sq.ycor()][sq.xcor()] = True
             #     print(occupied)
             #     return False
-            if x < 0 or x > 9 or (occupied[19 - y][x] and dy == 0 ):
+            if x < 0 or x > 9 or (occupied[19 - y][x] != None and dy == 0 ):
                 return False
-            if y < 0 or occupied[19 - y][x]:
+            if y < 0 or occupied[19 - y][x] != None:
                 
                 for sq in self.squares:
-                    occupied[19 - sq.ycor()][sq.xcor()] = True
+                    occupied[19 - sq.ycor()][sq.xcor()] = sq
                 print(occupied)
                 return False
         return True
