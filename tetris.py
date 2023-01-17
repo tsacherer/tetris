@@ -116,6 +116,18 @@ class Game:
         turtle.listen()
         turtle.mainloop()
 
+    def complete_line(self, y):
+        for spot in self.occupied[19 - y]:
+            if spot == None:
+                return False
+        return True
+    
+    def any_complete_line(self):
+        for y in range(19):
+            if self.complete_line(y):
+                return y
+        return -1
+                
 
     def gameloop(self):
 
@@ -125,11 +137,32 @@ class Game:
             turtle.ontimer(self.gameloop, 300) 
         
         elif self.active.ycors() < 20:
+            # Need to check if a line is complete here
+            # If any line is complete
+            
+            while self.any_complete_line() != -1:
+            # hide all squares in that line --> make the grid spot empty
+                line = 19 - self.any_complete_line()
+                print(line)
+                print(self.occupied)
+                for spot in range(10):
+                    self.occupied[line][spot].hideturtle()
+                    self.occupied[line][spot] = None
+                print(self.occupied)        
+                    
+            # move all squares above that line down one --> change the gird
+                for row in range(line -1, 0, -1):
+                    for col in range(10):
+                        if self.occupied[row][col] != None:
+                            self.occupied[row][col].goto(self.occupied[row][col].xcor(), self.occupied[row][col].ycor() -1)
+                            self.occupied[row + 1][col] = self.occupied[row][col]
+                            self.occupied[row][col] = None
+
+            # Then check again --> could make into a while loop
             self.new_block(random.randint(1, 7))
             turtle.ontimer(self.gameloop, 300) 
 
         else:
-            print("Bye")
             turtle.onkeypress(None, 'Left')
             turtle.onkeypress(None, 'Right')
             turtle.onkeypress(None, 'space')
@@ -231,11 +264,11 @@ class Block:
         for square in self.squares:
             x = square.xcor() + dx
             y = square.ycor() + dy
-            print(y)
+            #print(y)
             if y == -1:
                 for sq in self.squares:
-                    occupied[19 - sq.ycor()][sq.xcor()] = square
-                print(occupied)
+                    occupied[19 - sq.ycor()][sq.xcor()] = sq 
+                #print(occupied)
                 return False
             if y > 19:
                 return True
@@ -250,7 +283,7 @@ class Block:
                 
                 for sq in self.squares:
                     occupied[19 - sq.ycor()][sq.xcor()] = sq
-                print(occupied)
+                #print(occupied)
                 return False
         return True
 
